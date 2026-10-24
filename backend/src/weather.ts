@@ -181,10 +181,51 @@ export class SingaporeWeatherClient {
   ) {}
 
   async getCurrentWeather(latitude: number, longitude: number): Promise<WeatherSnapshot> {
-    const forecastPayload = await this.fetchLatestForecastPayload().catch(() => null);
-    return forecastPayload
+    // Each feed fails independently: a missing reading leaves only its own field null.
+    const [
+      forecastPayload,
+      temperature,
+      humidity,
+      rainfall,
+      windSpeed,
+      windDirection,
+      uv,
+      airQuality,
+      twentyFourHour,
+      fourDay,
+    ] = await Promise.all([
+      this.fetchLatestForecastPayload().catch(() => null),
+      this.fetchNearestReading('air-temperature', latitude, longitude).catch(() => null),
+      this.fetchNearestReading('relative-humidity', latitude, longitude).catch(() => null),
+      this.fetchNearestReading('rainfall', latitude, longitude).catch(() => null),
+      this.fetchNearestReading('wind-speed', latitude, longitude).catch(() => null),
+      this.fetchNearestReading('wind-direction', latitude, longitude).catch(() => null),
+      this.fetchUvIndex().catch(() => null),
+      this.fetchAirQuality(latitude, longitude).catch(() => null),
+      this.fetchTwentyFourHourForecast(latitude, longitude).catch(() => null),
+      this.fetchFourDayForecast().catch(() => null),
+    ]);
+
+    const snapshot = forecastPayload
       ? this.snapshotFromPayload(forecastPayload, latitude, longitude)
       : this.emptyForecastSnapshot();
+
+    return {
+      ...snapshot,
+      temperature_c: temperature?.value ?? null,
+      humidity_percent: humidity?.value ?? null,
+      rainfall_mm: rainfall?.value ?? null,
+      wind_speed_knots: windSpeed?.value ?? null,
+      wind_direction_degrees: windDirection?.value ?? null,
+      uv_index: uv?.value ?? null,
+      psi_twenty_four_hourly: airQuality?.psi ?? null,
+      pm25_one_hourly: airQuality?.pm25 ?? null,
+      air_quality_region: airQuality?.region ?? null,
+      forecast_low_c: twentyFourHour?.low ?? null,
+      forecast_high_c: twentyFourHour?.high ?? null,
+      forecast_periods: twentyFourHour?.periods ?? [],
+      daily_forecast: fourDay?.days ?? [],
+    };
   }
 
   async fetchLatestForecastPayload(): Promise<ForecastPayload> {

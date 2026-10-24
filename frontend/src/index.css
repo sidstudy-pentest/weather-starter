@@ -1,3 +1,5 @@
+@import './themes.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -10,16 +12,16 @@ body,
 
 body {
   @apply text-white antialiased;
-  background:
-    radial-gradient(120% 80% at 70% 0%, rgba(255, 255, 255, 0.18) 0%, transparent 55%),
-    radial-gradient(90% 70% at 10% 100%, rgba(80, 110, 150, 0.55) 0%, transparent 60%),
-    linear-gradient(170deg, #6f8aa8 0%, #5a7591 35%, #4a627c 65%, #3c5066 100%);
+  font-family: var(--font-body);
+  background: var(--body-bg);
+  background-size: var(--body-size, auto);
   background-attachment: fixed;
   background-repeat: no-repeat;
 }
 
 button,
-input {
+input,
+select {
   @apply transition;
 }
 
@@ -34,7 +36,7 @@ input:focus-visible {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.18);
+  background: rgb(var(--c-fg) / 0.18);
   border-radius: 9999px;
 }
 

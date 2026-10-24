@@ -90,7 +90,7 @@ export function AddLocationForm() {
         <button
           type="submit"
           disabled={submitting}
-          className="rounded-md bg-white/90 px-3 py-1.5 text-xs font-semibold text-slate-900 hover:bg-white disabled:cursor-not-allowed disabled:opacity-60"
+          className="rounded-md bg-white/90 px-3 py-1.5 text-xs font-semibold text-black hover:bg-white disabled:cursor-not-allowed disabled:opacity-60"
         >
           {submitting ? 'Adding…' : 'Add'}
         </button>

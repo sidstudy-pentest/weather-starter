@@ -1,4 +1,5 @@
 import { CloudIcon, DropletIcon, SunIcon, ThermometerIcon, TrendIcon, WindIcon } from './icons';
+import { MapCard } from './MapCard';
 import type { ReactNode } from 'react';
 import type { WeatherSnapshot } from '../types';
 
@@ -72,6 +73,26 @@ function airQualityLabel(psi: number | null | undefined): string {
   if (psi <= 200) return 'Unhealthy';
   if (psi <= 300) return 'Very Unhealthy';
   return 'Hazardous';
+}
+
+export function ConditionTile({ weather }: WeatherProps) {
+  const condition = weather?.condition || 'Unavailable';
+  const area = weather?.area;
+  const validPeriod = weather?.valid_period_text;
+
+  return (
+    <TileShell
+      icon={<CloudIcon className="h-3.5 w-3.5" />}
+      title="2-Hour Forecast"
+      className="col-span-2"
+    >
+      <div className="text-3xl font-light leading-tight text-white/95">{condition}</div>
+      <p className="mt-3 text-xs leading-snug text-white/70">
+        {validPeriod ? `Valid ${validPeriod}` : 'Forecast period unavailable.'}
+        {area ? ` · ${area}` : ''}
+      </p>
+    </TileShell>
+  );
 }
 
 export function AirQualityTile({ weather }: WeatherProps) {
@@ -247,6 +268,8 @@ export function AveragesTile({ weather }: WeatherProps) {
 export function TileGrid({ weather }: WeatherProps) {
   return (
     <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <MapCard />
+      <ConditionTile weather={weather} />
       <AirQualityTile weather={weather} />
       <WindTile weather={weather} />
       <UVTile weather={weather} />
